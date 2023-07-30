@@ -1,31 +1,39 @@
 import requests
-import logging
+import logging, os
+from urllib.parse import urlparse
 
 import azure.functions as func
 
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    test_url = "http://google.com"
-    # logging.info('az_request_check initiated')
+    logging.info('az_request_check initiated')
+    logging.info(f'req.url: {req.url}')
 
     # GOVMAP_URL = "https://open.govmap.gov.il/geoserver/opendata/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=opendata:PARCEL_ALL&cql_filter=GUSH_NUM={}+AND+PARCEL={}&outputFormat=application/json&SRSNAME=EPSG:4326"
 
-    if len(req.params) > 0:
-        query_params = req.params
-        # Convert the dictionary to a string representation
-        test_url = "&".join([f"{key}={value}" for key, value in query_params.items()])
-    else:
-        test_url = "http://google.com"  
+    # Get the raw query string from the request URL
+    raw_query_string = urlparse(req.url).query
+    test_url = f"?{raw_query_string}"
 
-    
+
+    if test_url == "":
+        test_url = "http://google.com"
+        
 
     # test_url = GOVMAP_URL % (gush, helka)
     logging.info(f'test_url: {test_url}')
+    output = ""
 
     try:
         response = requests.get(test_url)
         logging.info(f'response: {response}')
-        output = response.text
+
+        # get response headers
+        logging.info("Response Headers:")
+        for key, value in response.headers.items():
+            output+=(f"{key}: {value}\n")
+
+        output += response.text
     except Exception as e:
         logging.error(f'Exception: {e}')
 
