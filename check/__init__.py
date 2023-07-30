@@ -13,11 +13,11 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     # Get the raw query string from the request URL
     raw_query_string = urlparse(req.url).query
-    test_url = f"?{raw_query_string}"
+    test_url = f"{raw_query_string}"
 
 
     if test_url == "":
-        test_url = "http://google.com"
+        test_url = "https://open.govmap.gov.il/geoserver/opendata/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=2.0.0&TYPENAMES=opendata:PARCEL_ALL&cql_filter=GUSH_NUM=6635+AND+PARCEL=286&outputFormat=application/json&SRSNAME=EPSG:4326"
         
 
     # test_url = GOVMAP_URL % (gush, helka)
